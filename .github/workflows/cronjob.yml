@@ -1,0 +1,25 @@
+name: Get free discounts on itch.io every 12 hours
+on:
+  push:
+    branches: [main]
+jobs:
+  generate-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+      - name: Get current date
+        id: current_date
+        run: echo "CURRENT_DATE=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_OUTPUT
+      - name: Generate results
+        uses: ./.github/actions/cronjob
+      - name: Commit results
+        run: |
+          git config --global user.email "gh-action[bot]@users.noreply.github.com"
+          git config --global user.name "gh-action[bot]"
+          mv items.json assets/
+          git add assets/items.json
+          git commit -m "ci(cronjob): update items.json (${{ steps.current_date.outputs.CURRENT_DATE }})"
+      - name: Push results
+        run: git push

@@ -1,0 +1,7 @@
+name: "cronjob-json"
+description: "Generate JSON every 12 hours"
+author: "ShaigroRB"
+version: "1.0.0"
+runs:
+  using: "docker"
+  image: "Dockerfile"
