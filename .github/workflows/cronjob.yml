@@ -1,7 +1,8 @@
 name: Get free discounts on itch.io every 12 hours
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: "* */12 * * *"
+
 jobs:
   generate-file:
     runs-on: ubuntu-latest
