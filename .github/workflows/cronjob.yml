@@ -13,6 +13,8 @@ jobs:
       - name: Get current date
         id: current_date
         run: echo "CURRENT_DATE=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_OUTPUT
+      - name: Copy previous results
+        run: cp assets/items.json assets/prev_items.json
       - name: Generate results
         uses: ./.github/actions/cronjob
       - name: Commit results
@@ -20,7 +22,7 @@ jobs:
           git config --global user.email "gh-action[bot]@users.noreply.github.com"
           git config --global user.name "gh-action[bot]"
           mv items.json assets/
-          git add assets/items.json
+          git add assets/items.json assets/prev_items.json
           git commit -m "ci(cronjob): update items.json (${{ steps.current_date.outputs.CURRENT_DATE }})"
       - name: Push results
         run: git push
