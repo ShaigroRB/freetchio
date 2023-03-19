@@ -109,7 +109,13 @@
         z-index: 1;
         border-bottom: 3px ridge var(--sl-color-danger-600);
         background: var(--sl-color-danger-600);
-        color: var(--sl-color-danger-50);
+        color: white;
+      }
+
+      #app-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
       }
 
       #app-title h1 {
@@ -130,9 +136,11 @@
       <div class="nav-column">
         <div id="app-title">
           <h1>Freetchio</h1>
-          <h6>Find 100% discounts on itch.io</h6>
+          <h6>- Find 100% discounts on itch.io</h6>
         </div>
-        <div id="filters"></div>
+        <div id="filters">
+          <sl-switch id="sort-by-date">Sort by date</sl-switch>
+        </div>
       </div>
       <div class="nav-column"></div>
     </nav>

@@ -46,7 +46,7 @@ const variantFromDaysLeft = (days) => {
   return variant;
 };
 
-const generateCard = ({ category, item }) => {
+const generateCard = (item) => {
   const slCard = document.createElement("sl-card");
   slCard.classList.add("item-card");
   slCard.id = item.id;
@@ -74,7 +74,7 @@ const generateCard = ({ category, item }) => {
   const itemCategory = document.createElement("sl-badge");
   itemCategory.classList.add("item-category");
   itemCategory.variant = "success";
-  itemCategory.innerText = category;
+  itemCategory.innerText = item.category;
 
   const endDate = document.createElement("sl-badge");
   endDate.classList.add("item-end-date");
@@ -98,21 +98,48 @@ const generateCard = ({ category, item }) => {
   return slCard;
 };
 
-// initialize the page
-const categories = await fetch("assets/items.json").then((response) =>
-  response.json()
-);
-
-const cards = document.querySelector("#cards");
-for (const [category, items] of Object.entries(categories)) {
-  if (items.length === 0) {
-    continue;
-  }
-
-  for (const item of items) {
-    const card = generateCard({ category, item });
-    if (card) {
-      cards.appendChild(card);
+const getItemsWithCategory = (itemsByCategory) => {
+  const newItems = [];
+  for (const [category, items] of Object.entries(itemsByCategory)) {
+    for (const item of items) {
+      newItems.push({ ...item, category });
     }
   }
-}
+  return newItems;
+};
+
+const generateCards = (container, items) => {
+  container.innerHTML = "";
+  for (const item of items) {
+    const card = generateCard(item);
+    if (card) {
+      container.appendChild(card);
+    }
+  }
+};
+
+// initialize the page
+const itemsByCategory = await fetch("assets/items.json").then((response) =>
+  response.json()
+);
+const items = getItemsWithCategory(itemsByCategory);
+
+const cards = document.querySelector("#cards");
+
+// generate for the first time the cards
+generateCards(cards, items);
+
+const sortByDate = document.querySelector("#sort-by-date");
+sortByDate.addEventListener("click", () => {
+  if (sortByDate.checked) {
+    const sortedItems = [...items];
+    sortedItems.sort((a, b) => {
+      const aDate = new Date(a.end_date);
+      const bDate = new Date(b.end_date);
+      return aDate - bDate;
+    });
+    generateCards(cards, sortedItems);
+  } else {
+    generateCards(cards, items);
+  }
+});
