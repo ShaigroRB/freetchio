@@ -119,9 +119,12 @@ const generateCards = (container, items) => {
 };
 
 // initialize the page
-const itemsByCategory = await fetch("assets/items.json").then((response) =>
-  response.json()
-);
+
+// the "?" after the filename is to specify a version of the file
+// this tricks the browser to ignore the cache & effectively reload the file
+const itemsByCategory = await fetch(
+  `assets/items.json?${new Date().getTime()}`
+).then((response) => response.json());
 const items = getItemsWithCategory(itemsByCategory);
 
 const cards = document.querySelector("#cards");
