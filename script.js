@@ -118,6 +118,37 @@ const generateCards = (container, items) => {
   }
 };
 
+const setTheme = (theme, element) => {
+  const iconTheme = element.querySelector("sl-icon");
+  if (theme === "dark") {
+    iconTheme.name = "moon-fill";
+    element.className = "sl-theme-dark";
+  } else {
+    iconTheme.name = "sun-fill";
+    element.className = "sl-theme-light";
+  }
+};
+
+const toggleTheme = () => {
+  const currentTheme = document.documentElement.className;
+  if (currentTheme === "sl-theme-dark") {
+    setTheme("light", document.documentElement);
+    localStorage.setItem("theme", "light");
+  } else {
+    setTheme("dark", document.documentElement);
+    localStorage.setItem("theme", "dark");
+  }
+};
+
+const loadTheme = () => {
+  const theme = localStorage.getItem("theme");
+  if (theme) {
+    setTheme(theme, document.documentElement);
+  } else {
+    localStorage.setItem("theme", "sl-theme-light");
+  }
+};
+
 // initialize the page
 
 // the "?" after the filename is to specify a version of the file
@@ -147,8 +178,13 @@ sortByDate.addEventListener("click", () => {
   }
 });
 
-const infoDrawer = document.querySelector("#info-drawer");
 const openInfoBtn = document.querySelector("#open-info");
 openInfoBtn.addEventListener("click", () => {
+  const infoDrawer = document.querySelector("#info-drawer");
   infoDrawer.show();
 });
+
+loadTheme();
+
+const toggleThemeBtn = document.querySelector("#toggle-theme");
+toggleThemeBtn.addEventListener("click", toggleTheme);
