@@ -14,9 +14,17 @@
       src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"
     ></script>
     <style>
-      #cards {
+      body {
+        padding: 0;
+        margin: 0;
         font-family: var(--sl-font-sans);
+      }
+
+      #cards {
         letter-spacing: var(--sl-letter-spacing-denser);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
       }
 
       .item-card {
@@ -93,11 +101,40 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
       }
+
+      nav {
+        padding: 1rem;
+        position: sticky;
+        border-bottom: 3px ridge var(--sl-color-danger-600);
+        background: var(--sl-color-danger-600);
+        color: var(--sl-color-danger-50);
+      }
+
+      #app-title h1 {
+        padding: 0;
+        margin: 0;
+        margin-right: 0.25rem;
+      }
+      #app-title h6 {
+        padding: 0;
+        margin: 0;
+      }
     </style>
 
     <title>Freetchio - Find 100% discounts on itch.io</title>
   </head>
   <body>
+    <nav>
+      <div class="nav-column">
+        <div id="app-title">
+          <h1>Freetchio</h1>
+          <h6>Find 100% discounts on itch.io</h6>
+        </div>
+        <div id="filters"></div>
+      </div>
+      <div class="nav-column"></div>
+    </nav>
+
     <div id="cards"></div>
 
     <script type="module" src="script.js"></script>
