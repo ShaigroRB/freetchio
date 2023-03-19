@@ -145,7 +145,7 @@ const loadTheme = () => {
   if (theme) {
     setTheme(theme, document.documentElement);
   } else {
-    localStorage.setItem("theme", "sl-theme-light");
+    localStorage.setItem("theme", "light");
   }
 };
 
