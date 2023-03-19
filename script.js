@@ -146,3 +146,9 @@ sortByDate.addEventListener("click", () => {
     generateCards(cards, items);
   }
 });
+
+const infoDrawer = document.querySelector("#info-drawer");
+const openInfoBtn = document.querySelector("#open-info");
+openInfoBtn.addEventListener("click", () => {
+  infoDrawer.show();
+});

@@ -110,6 +110,9 @@
         border-bottom: 3px ridge var(--sl-color-danger-600);
         background: var(--sl-color-danger-600);
         color: white;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
       }
 
       #app-title {
@@ -127,6 +130,16 @@
         padding: 0;
         margin: 0;
       }
+
+      #filters {
+        display: flex;
+        flex-direction: row;
+      }
+
+      #info-drawer::part(panel) {
+        color: var(--sl-color-danger-950);
+        background-color: var(--sl-color-danger-200);
+      }
     </style>
 
     <title>Freetchio - Find 100% discounts on itch.io</title>
@@ -142,10 +155,44 @@
           <sl-switch id="sort-by-date">Sort by date</sl-switch>
         </div>
       </div>
-      <div class="nav-column"></div>
+      <div class="nav-column">
+        <sl-button variant="danger" size="medium" circle id="open-info">
+          <sl-icon name="question-circle-fill" label="More info"></sl-icon>
+        </sl-button>
+      </div>
     </nav>
 
     <div id="cards"></div>
+
+    <sl-drawer label="About" class="drawer-overview" id="info-drawer">
+      The goal of Freetchio is to make it easy to find 100% discounts on
+      itch.io.
+
+      <br />
+      <br />
+      The code can be found on GitHub:
+      <sl-button
+        variant="text"
+        href="https://github.com/ShaigroRB/freetchio"
+        target="_blank"
+      >
+        <sl-icon slot="suffix" name="link-45deg"></sl-icon>
+        the website
+      </sl-button>
+      <sl-button
+        variant="text"
+        href="https://github.com/ShaigroRB/go-free-discount-itch"
+        target="_blank"
+      >
+        <sl-icon slot="suffix" name="link-45deg"></sl-icon>
+        the scraper lib
+      </sl-button>
+      <div slot="footer">
+        <br />
+        © 2023 Shaigro
+        <br />
+      </div>
+    </sl-drawer>
 
     <script type="module" src="script.js"></script>
   </body>
