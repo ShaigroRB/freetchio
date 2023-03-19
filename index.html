@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="shortcut icon" href="#" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/themes/light.css"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"
+    ></script>
+    <style>
+      #cards {
+        font-family: var(--sl-font-sans);
+        letter-spacing: var(--sl-letter-spacing-denser);
+      }
+
+      .item-card {
+        width: 10rem;
+        height: 15rem;
+        margin: 0.25rem;
+        box-shadow: var(--sl-shadow-small);
+        cursor: pointer;
+        position: relative;
+      }
+
+      .item-card small {
+        color: var(--sl-color-neutral-500);
+      }
+
+      .item-card [slot="footer"] {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .item-card::part(base) {
+        height: 100%;
+      }
+
+      .item-card::part(body) {
+        padding: var(--sl-spacing-small);
+      }
+
+      .item-category {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      .item-end-date {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+      }
+
+      .item-end-date::part(base) {
+        width: 100%;
+      }
+
+      sl-badge::part(base) {
+        font-size: var(--sl-font-size-medium);
+        border: initial;
+      }
+
+      .item-title {
+        text-decoration: none;
+        color: var(--sl-color-primary-950);
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+
+      .item-title:hover {
+        text-decoration: underline;
+        color: var(--sl-color-primary-950);
+      }
+
+      .item-description {
+        font-size: var(--sl-font-size-x-small);
+        color: var(--sl-color-neutral-600);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+    </style>
+
+    <title>Freetchio - Find 100% discounts on itch.io</title>
+  </head>
+  <body>
+    <div id="cards"></div>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>
