@@ -1,26 +1,37 @@
 /**
  * Given a date,
- * write "Ends in Xd, Yh, Zm"
+ * write "Xd Yh Zm"
+ *
+ * https://stackoverflow.com/a/13904120
  */
 const dateToEndsInXdYhZm = (date) => {
   const currentDate = new Date();
   const givenDate = new Date(date);
-  let daysLeft = givenDate.getDate() - currentDate.getDate();
-  daysLeft = daysLeft < 0 ? 0 : daysLeft;
-  let hoursLeft = givenDate.getHours() - currentDate.getHours();
-  hoursLeft = hoursLeft < 0 ? 0 : hoursLeft;
-  let minutesLeft = givenDate.getMinutes() - currentDate.getMinutes();
-  minutesLeft = minutesLeft < 0 ? 0 : minutesLeft;
 
-  if (!daysLeft && !hoursLeft && !minutesLeft) {
-    return null;
+  let delta = (givenDate - currentDate) / 1000;
+
+  let daysLeft = Math.floor(delta / 86400);
+  delta -= daysLeft * 86400;
+
+  let hoursLeft = Math.floor(delta / 3600) % 24;
+  delta -= hoursLeft * 3600;
+
+  let minutesLeft = Math.floor(delta / 60) % 60;
+  delta -= minutesLeft * 60;
+
+  if (daysLeft < 0) {
+    return { endsIn: null, daysLeft, hoursLeft, minutesLeft };
   }
 
   const daysStr = daysLeft ? `${daysLeft}d` : "";
   const hoursStr = hoursLeft ? `${hoursLeft}h` : "";
   const minutesStr = minutesLeft ? `${minutesLeft}m` : "";
 
-  const endsIn = `Ends in ${daysStr} ${hoursStr} ${minutesStr}`;
+  const lessThanAMinute = !daysLeft && !hoursLeft && !minutesLeft;
+
+  const endsIn = lessThanAMinute
+    ? ">1min left"
+    : `${daysStr} ${hoursStr} ${minutesStr} left`;
   return { endsIn, daysLeft, hoursLeft, minutesLeft };
 };
 
@@ -87,6 +98,7 @@ const generateCard = ({ category, item }) => {
   return slCard;
 };
 
+// initialize the page
 const categories = await fetch("assets/items.json").then((response) =>
   response.json()
 );
