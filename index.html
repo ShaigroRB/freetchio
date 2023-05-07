@@ -31,6 +31,26 @@
         </div>
         <div id="filters">
           <sl-switch id="sort-by-date">Sort by date</sl-switch>
+          <div id="filter-categories">
+            <span>Filter by categories</span>
+            <sl-select
+              id="select-category"
+              placeholder="All"
+              max-options-visible="1"
+              multiple
+              clearable
+              size="small"
+            >
+              <sl-option value="game-assets">game-assets</sl-option>
+              <sl-option value="games">games</sl-option>
+              <sl-option value="books">books</sl-option>
+              <sl-option value="tools">tools</sl-option>
+              <sl-option value="game-mods">mods</sl-option>
+              <sl-option value="soundtracks">soundtracks</sl-option>
+              <sl-option value="physical-games">physical games</sl-option>
+              <sl-option value="misc">misc</sl-option>
+            </sl-select>
+          </div>
         </div>
       </div>
       <div class="nav-column">

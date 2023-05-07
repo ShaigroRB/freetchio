@@ -188,3 +188,16 @@ loadTheme();
 
 const toggleThemeBtn = document.querySelector("#toggle-theme");
 toggleThemeBtn.addEventListener("click", toggleTheme);
+
+const selectCategories = document.querySelector("#select-category");
+selectCategories.addEventListener("sl-change", (ev) => {
+  const categories = ev.target.value;
+  if (categories.length === 0) {
+    generateCards(cards, items);
+    return;
+  }
+  generateCards(
+    cards,
+    items.filter((item) => categories.includes(item.category))
+  );
+});
