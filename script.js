@@ -201,3 +201,21 @@ selectCategories.addEventListener("sl-change", (ev) => {
     items.filter((item) => categories.includes(item.category))
   );
 });
+
+/**
+ * Wait for all shoelace elements to be defined
+ * to display them.
+ */
+await Promise.allSettled([
+  customElements.whenDefined("sl-switch"),
+  customElements.whenDefined("sl-select"),
+  customElements.whenDefined("sl-button"),
+  customElements.whenDefined("sl-icon"),
+  customElements.whenDefined("sl-drawer"),
+  customElements.whenDefined("sl-card"),
+  customElements.whenDefined("sl-badge"),
+]);
+
+document
+  .querySelectorAll(".contain-shoelace")
+  .forEach((el) => el.classList.add("ready"));
