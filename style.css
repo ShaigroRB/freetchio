@@ -4,6 +4,19 @@ body {
   font-family: var(--sl-font-sans);
 }
 
+/* fade in ui elements once shoelace fully loaded */
+.contain-shoelace {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.contain-shoelace.ready {
+  opacity: 1;
+  visibility: visible;
+  transition: 0.1s visible;
+  transition: 0.4s opacity;
+}
+
 #cards {
   letter-spacing: var(--sl-letter-spacing-denser);
   display: flex;
