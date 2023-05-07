@@ -149,6 +149,21 @@ const loadTheme = () => {
   }
 };
 
+const getSavedFilters = () => {
+  const sortByDate = localStorage.getItem("sort-by-date") === "true";
+  const categoriesStr = localStorage.getItem("filter-by-categories") ?? "[]";
+  const categories = JSON.parse(categoriesStr);
+  return [sortByDate, categories];
+};
+
+const setSortByFilter = (isEnabled) => {
+  localStorage.setItem("sort-by-date", isEnabled);
+};
+
+const setCategoriesFilter = (categories) => {
+  localStorage.setItem("filter-by-categories", JSON.stringify(categories));
+};
+
 const getNewSortedItems = (items, isEnabled = true) => {
   if (!isEnabled) {
     return items;
@@ -162,6 +177,13 @@ const getNewSortedItems = (items, isEnabled = true) => {
   return sortedItems;
 };
 
+const getNewFilteredItems = (items, categories) => {
+  if (categories.length === 0) {
+    return items;
+  }
+  return [...items.filter((item) => categories.includes(item.category))];
+};
+
 // initialize the page
 
 // the "?" after the filename is to specify a version of the file
@@ -170,9 +192,12 @@ const itemsByCategory = await fetch(
   `assets/items.json?${new Date().getTime()}`
 ).then((response) => response.json());
 const originalItems = getItemsWithCategory(itemsByCategory);
+const [savedSortBy, savedCategories] = getSavedFilters();
 
-let items = [...originalItems];
-let isSortEnabled = false;
+let items = getNewSortedItems(
+  getNewFilteredItems(originalItems, savedCategories),
+  savedSortBy
+);
 
 const cards = document.querySelector("#cards");
 
@@ -180,14 +205,16 @@ const cards = document.querySelector("#cards");
 generateCards(cards, items);
 
 const sortByDate = document.querySelector("#sort-by-date");
+sortByDate.checked = savedSortBy;
 sortByDate.addEventListener("click", () => {
-  if (sortByDate.checked) {
+  const checked = sortByDate.checked;
+  if (checked) {
     generateCards(cards, getNewSortedItems(items));
-    isSortEnabled = true;
   } else {
     generateCards(cards, items);
-    isSortEnabled = false;
   }
+
+  setSortByFilter(checked);
 });
 
 const openInfoBtn = document.querySelector("#open-info");
@@ -202,17 +229,14 @@ const toggleThemeBtn = document.querySelector("#toggle-theme");
 toggleThemeBtn.addEventListener("click", toggleTheme);
 
 const selectCategories = document.querySelector("#select-category");
+selectCategories.value = savedCategories;
 selectCategories.addEventListener("sl-change", (ev) => {
   const categories = ev.target.value;
-  if (categories.length === 0) {
-    items = [...originalItems];
-    // don't forget to sort the filtered items if enabled
-    generateCards(cards, getNewSortedItems(items, isSortEnabled));
-    return;
-  }
-  items = originalItems.filter((item) => categories.includes(item.category));
+  items = getNewFilteredItems(originalItems, categories);
   // don't forget to sort the filtered items if enabled
-  generateCards(cards, getNewSortedItems(items, isSortEnabled));
+  generateCards(cards, getNewSortedItems(items, sortByDate.checked));
+
+  setCategoriesFilter(categories);
 });
 
 /**
