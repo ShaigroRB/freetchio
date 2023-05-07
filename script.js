@@ -149,6 +149,19 @@ const loadTheme = () => {
   }
 };
 
+const getNewSortedItems = (items, isEnabled = true) => {
+  if (!isEnabled) {
+    return items;
+  }
+  const sortedItems = [...items];
+  sortedItems.sort((a, b) => {
+    const aDate = new Date(a.end_date);
+    const bDate = new Date(b.end_date);
+    return aDate - bDate;
+  });
+  return sortedItems;
+};
+
 // initialize the page
 
 // the "?" after the filename is to specify a version of the file
@@ -156,7 +169,10 @@ const loadTheme = () => {
 const itemsByCategory = await fetch(
   `assets/items.json?${new Date().getTime()}`
 ).then((response) => response.json());
-const items = getItemsWithCategory(itemsByCategory);
+const originalItems = getItemsWithCategory(itemsByCategory);
+
+let items = [...originalItems];
+let isSortEnabled = false;
 
 const cards = document.querySelector("#cards");
 
@@ -166,15 +182,11 @@ generateCards(cards, items);
 const sortByDate = document.querySelector("#sort-by-date");
 sortByDate.addEventListener("click", () => {
   if (sortByDate.checked) {
-    const sortedItems = [...items];
-    sortedItems.sort((a, b) => {
-      const aDate = new Date(a.end_date);
-      const bDate = new Date(b.end_date);
-      return aDate - bDate;
-    });
-    generateCards(cards, sortedItems);
+    generateCards(cards, getNewSortedItems(items));
+    isSortEnabled = true;
   } else {
     generateCards(cards, items);
+    isSortEnabled = false;
   }
 });
 
@@ -193,13 +205,14 @@ const selectCategories = document.querySelector("#select-category");
 selectCategories.addEventListener("sl-change", (ev) => {
   const categories = ev.target.value;
   if (categories.length === 0) {
-    generateCards(cards, items);
+    items = [...originalItems];
+    // don't forget to sort the filtered items if enabled
+    generateCards(cards, getNewSortedItems(items, isSortEnabled));
     return;
   }
-  generateCards(
-    cards,
-    items.filter((item) => categories.includes(item.category))
-  );
+  items = originalItems.filter((item) => categories.includes(item.category));
+  // don't forget to sort the filtered items if enabled
+  generateCards(cards, getNewSortedItems(items, isSortEnabled));
 });
 
 /**
