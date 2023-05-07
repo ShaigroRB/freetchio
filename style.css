@@ -125,3 +125,17 @@ nav {
   color: var(--sl-color-danger-950);
   background-color: var(--sl-color-danger-200);
 }
+
+#filter-categories {
+  margin-left: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+#filter-categories > span {
+  margin-right: 0.25rem;
+}
+
+#filter-categories > sl-select {
+  max-width: 14rem;
+}
