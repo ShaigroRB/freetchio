@@ -46,12 +46,34 @@ const variantFromDaysLeft = (days) => {
   return variant;
 };
 
+const addViewedItem = (itemId) => {
+  const items = JSON.parse(localStorage.getItem("viewed-items"));
+  items[itemId] = true;
+  localStorage.setItem("viewed-items", JSON.stringify(items));
+};
+
+const isViewedItem = (id) => {
+  const items = JSON.parse(localStorage.getItem("viewed-items"));
+  return items[id] ?? false;
+};
+
+const createItemIsViewedSpan = () => {
+  const itemIsViewed = document.createElement("span");
+  itemIsViewed.classList.add("ribbon");
+  itemIsViewed.innerText = "viewed";
+  return itemIsViewed;
+};
+
 const generateCard = (item) => {
   const slCard = document.createElement("sl-card");
   slCard.classList.add("item-card");
   slCard.id = item.id;
   slCard.addEventListener("click", () => {
     window.open(item.link, "_blank").focus();
+    if (!isViewedItem(item.id)) {
+      addViewedItem(item.id);
+      slCard.appendChild(createItemIsViewedSpan());
+    }
   });
 
   const img = document.createElement("img");
@@ -94,6 +116,10 @@ const generateCard = (item) => {
 
   slCard.appendChild(itemCategory);
   slCard.appendChild(endDate);
+
+  if (isViewedItem(item.id)) {
+    slCard.appendChild(createItemIsViewedSpan());
+  }
 
   return slCard;
 };
@@ -198,6 +224,11 @@ let items = getNewSortedItems(
   getNewFilteredItems(originalItems, savedCategories),
   savedSortBy
 );
+
+// init viewed items in local storage if it does not exist
+if (localStorage.getItem("viewed-items") == null) {
+  localStorage.setItem("viewed-items", JSON.stringify({}));
+}
 
 const cards = document.querySelector("#cards");
 
