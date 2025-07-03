@@ -267,11 +267,12 @@ const sortByDate = document.querySelector("#sort-by-date");
 sortByDate.checked = filters.sortByDate;
 sortByDate.addEventListener("click", () => {
   const checked = sortByDate.checked;
-  if (checked) {
-    generateCards(cards, getNewSortedItems(items));
-  } else {
-    generateCards(cards, items);
-  }
+  items = getFilteredItemsByViewed(
+    getFilteredItemsByCategories(originalItems, filters.categories),
+    filters.hideViewedItems
+  );
+
+  generateCards(cards, getNewSortedItems(items, checked));
 
   filters.sortByDate = checked;
   setSortByFilter(checked);
