@@ -1,3 +1,9 @@
+const filters = {
+  sortByDate: false,
+  hideViewedItems: false,
+  categories: [],
+};
+
 /**
  * Given a date,
  * write "Xd Yh Zm"
@@ -17,12 +23,34 @@ const variantFromDaysLeft = (days) => {
   return variant;
 };
 
+const addViewedItem = (itemId) => {
+  const items = JSON.parse(localStorage.getItem("viewed-items"));
+  items[itemId] = true;
+  localStorage.setItem("viewed-items", JSON.stringify(items));
+};
+
+const isViewedItem = (id) => {
+  const items = JSON.parse(localStorage.getItem("viewed-items"));
+  return items[id] ?? false;
+};
+
+const createItemIsViewedSpan = () => {
+  const itemIsViewed = document.createElement("span");
+  itemIsViewed.classList.add("ribbon");
+  itemIsViewed.innerText = "viewed";
+  return itemIsViewed;
+};
+
 const generateCard = (item) => {
   const slCard = document.createElement("sl-card");
   slCard.classList.add("item-card");
   slCard.id = item.id;
   slCard.addEventListener("click", () => {
     window.open(item.link, "_blank").focus();
+    if (!isViewedItem(item.id)) {
+      addViewedItem(item.id);
+      slCard.appendChild(createItemIsViewedSpan());
+    }
   });
 
   const img = document.createElement("img");
@@ -65,6 +93,10 @@ const generateCard = (item) => {
 
   slCard.appendChild(itemCategory);
   slCard.appendChild(endDate);
+
+  if (isViewedItem(item.id)) {
+    slCard.appendChild(createItemIsViewedSpan());
+  }
 
   return slCard;
 };
@@ -123,12 +155,17 @@ const loadTheme = () => {
 const getSavedFilters = () => {
   const sortByDate = localStorage.getItem("sort-by-date") === "true";
   const categoriesStr = localStorage.getItem("filter-by-categories") ?? "[]";
+  const hideViewed = localStorage.getItem("hide-viewed-items") === "true";
   const categories = JSON.parse(categoriesStr);
-  return [sortByDate, categories];
+  return [sortByDate, hideViewed, categories];
 };
 
 const setSortByFilter = (isEnabled) => {
   localStorage.setItem("sort-by-date", isEnabled);
+};
+
+const setHideViewedFilter = (isEnabled) => {
+  localStorage.setItem("hide-viewed-items", isEnabled);
 };
 
 const setCategoriesFilter = (categories) => {
@@ -148,11 +185,21 @@ const getNewSortedItems = (items, isEnabled = true) => {
   return sortedItems;
 };
 
-const getNewFilteredItems = (items, categories) => {
+const getFilteredItemsByCategories = (items, categories) => {
   if (categories.length === 0) {
     return items;
   }
   return [...items.filter((item) => categories.includes(item.category))];
+};
+
+/** Returns only the items that have been viewed by the user. */
+const getFilteredItemsByViewed = (items, hideViewed = true) => {
+  if (!hideViewed) {
+    return items;
+  }
+
+  const viewedItems = JSON.parse(localStorage.getItem("viewed-items"));
+  return [...items.filter((item) => !viewedItems[item.id] ?? true)];
 };
 
 // initialize the page
@@ -163,12 +210,24 @@ const itemsByCategory = await fetch(
   `assets/items.json?${new Date().getTime()}`
 ).then((response) => response.json());
 const originalItems = getItemsWithCategory(itemsByCategory);
-const [savedSortBy, savedCategories] = getSavedFilters();
+const [savedSortBy, savedHideViewed, savedCategories] = getSavedFilters();
+
+filters.categories = savedCategories;
+filters.hideViewedItems = savedHideViewed;
+filters.sortByDate = savedSortBy;
 
 let items = getNewSortedItems(
-  getNewFilteredItems(originalItems, savedCategories),
-  savedSortBy
+  getFilteredItemsByViewed(
+    getFilteredItemsByCategories(originalItems, filters.categories),
+    filters.hideViewedItems
+  ),
+  filters.sortByDate
 );
+
+// init viewed items in local storage if it does not exist
+if (localStorage.getItem("viewed-items") == null) {
+  localStorage.setItem("viewed-items", JSON.stringify({}));
+}
 
 const cards = document.querySelector("#cards");
 
@@ -176,16 +235,32 @@ const cards = document.querySelector("#cards");
 generateCards(cards, items);
 
 const sortByDate = document.querySelector("#sort-by-date");
-sortByDate.checked = savedSortBy;
+sortByDate.checked = filters.sortByDate;
 sortByDate.addEventListener("click", () => {
   const checked = sortByDate.checked;
-  if (checked) {
-    generateCards(cards, getNewSortedItems(items));
-  } else {
-    generateCards(cards, items);
-  }
+  items = getFilteredItemsByViewed(
+    getFilteredItemsByCategories(originalItems, filters.categories),
+    filters.hideViewedItems
+  );
 
+  generateCards(cards, getNewSortedItems(items, checked));
+
+  filters.sortByDate = checked;
   setSortByFilter(checked);
+});
+
+const hideViewedItems = document.querySelector("#hide-viewed-items");
+hideViewedItems.checked = filters.hideViewedItems;
+hideViewedItems.addEventListener("click", () => {
+  const checked = hideViewedItems.checked;
+  items = getFilteredItemsByViewed(
+    getFilteredItemsByCategories(originalItems, filters.categories),
+    checked
+  );
+  generateCards(cards, getNewSortedItems(items, filters.sortByDate));
+
+  filters.hideViewedItems = checked;
+  setHideViewedFilter(checked);
 });
 
 const openInfoBtn = document.querySelector("#open-info");
@@ -200,13 +275,17 @@ const toggleThemeBtn = document.querySelector("#toggle-theme");
 toggleThemeBtn.addEventListener("click", toggleTheme);
 
 const selectCategories = document.querySelector("#select-category");
-selectCategories.value = savedCategories;
+selectCategories.value = filters.categories;
 selectCategories.addEventListener("sl-change", (ev) => {
   const categories = ev.target.value;
-  items = getNewFilteredItems(originalItems, categories);
+  items = getFilteredItemsByViewed(
+    getFilteredItemsByCategories(originalItems, categories),
+    filters.hideViewedItems
+  );
   // don't forget to sort the filtered items if enabled
-  generateCards(cards, getNewSortedItems(items, sortByDate.checked));
+  generateCards(cards, getNewSortedItems(items, filters.sortByDate));
 
+  filters.categories = categories;
   setCategoriesFilter(categories);
 });
 
