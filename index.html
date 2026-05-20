@@ -13,10 +13,23 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/themes/dark.css"
     />
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/shoelace-autoloader.js"
-    ></script>
+    <script type="module">
+      // Set the base path so Shoelace can load its assets (icons, etc.)
+      import { setBasePath } from "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/utilities/base-path.js";
+      setBasePath(
+        "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/",
+      );
+
+      // Import only the components you use
+      import "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/components/switch/switch.js";
+      import "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/components/select/select.js";
+      import "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/components/option/option.js";
+      import "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/components/button/button.js";
+      import "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/components/icon/icon.js";
+      import "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/components/drawer/drawer.js";
+      import "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/components/card/card.js";
+      import "https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.3.0/dist/components/badge/badge.js";
+    </script>
 
     <link rel="stylesheet" href="style.css" />
 
