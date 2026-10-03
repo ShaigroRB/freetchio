@@ -70,11 +70,23 @@ const createItemIsViewedSpan = () => {
   return itemIsViewed;
 };
 
+/** Only allow http(s) links to prevent javascript: URI execution. */
+const isSafeUrl = (url) => {
+  try {
+    return ["http:", "https:"].includes(new URL(url, window.location.href).protocol);
+  } catch {
+    return false;
+  }
+};
+
 const generateCard = (item) => {
   const slCard = document.createElement("sl-card");
   slCard.classList.add("item-card");
   slCard.id = item.id;
   slCard.addEventListener("click", () => {
+    if (!isSafeUrl(item.link)) {
+      return;
+    }
     window.open(item.link, "_blank").focus();
     if (!isViewedItem(item.id)) {
       addViewedItem(item.id);
@@ -90,7 +102,7 @@ const generateCard = (item) => {
   const link = document.createElement("a");
   link.classList.add("item-title");
   link.innerText = item.title;
-  link.href = item.link;
+  link.href = isSafeUrl(item.link) ? item.link : "#";
 
   const description = document.createElement("span");
   description.innerText = item.description;
