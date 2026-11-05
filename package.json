@@ -1,0 +1,13 @@
+{
+  "name": "freetchio",
+  "version": "1.0.0",
+  "description": "Find 100% discounts on itch.io",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
